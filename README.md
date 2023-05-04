@@ -20,3 +20,19 @@ If you want to start the server, run
 npm start
 ```
 
+## To upload your changes to github repository
+After you make any changes in the file, create a new branch
+
+```
+git checkout -b branch_name
+```
+
+Then, run
+
+```
+git add .
+git commit -m "Describe what you did here"
+git push origin HEAD
+
+```
+Then, go to the repository on GitHub and create a pull request
