@@ -1,0 +1,24 @@
+{
+  "name": "group_project",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kzaiets/college_database_group.git"
+  },
+  "author": "Karina Zaiets",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kzaiets/college_database_group/issues"
+  },
+  "homepage": "https://github.com/kzaiets/college_database_group#readme",
+  "dependencies": {
+    "express": "^4.18.2",
+    "mysql2": "^3.2.4"
+  }
+}
