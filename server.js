@@ -1,19 +1,44 @@
-// Setting up server and creating APIs
+//packages
+const con = require('./connection.js');
+const express = require('express');
 
-// Server setup
-const express = require('express')
-const app = express()
-const port = 3000
+//instance expression
+const app = express();
 
-//Create APIs
+//log
+console.log('test');
 
+//server
+const port = 3000; 
 
+//json 
+app.use(express.json());
 
-
-
-
-// Start server and listen on the port
-app.listen(port, () => {
-    console.log(`listening on port ${port}`)
+//API
+app.get('/' , (req, res) => {
+  con.query("SELECT * FROM users", (err, result)=>{
+    if (err){
+      res.send('error');
+    }else{
+      res.send(result);
+    }
+  });
 });
 
+app.post('/' , (req, res) => {
+  const data = req.body;
+  con.query("INSERT INTO users SET ?",data, (err, result)=>{
+    if (err){
+      res.send('error');
+    }else{
+      res.send(result);
+    }
+  } ); 
+})
+
+
+
+//Start server listening on the port
+app.listen(port, () => {
+  console.log(`listening on port ${port}`)
+});
