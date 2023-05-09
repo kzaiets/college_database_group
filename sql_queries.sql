@@ -1,4 +1,4 @@
---Create SQL queries
+-- Create SQL queries
 -- 1. Admins should be able to enable or disable the availability of a course 
 DROP PROCEDURE IF EXISTS ChangeAvailability; 
 DELIMITER //
