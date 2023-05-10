@@ -81,7 +81,7 @@ app.post('/courseavail/:courseid/:enabledisable', function (request, response) {
     });    
 });
 
-//API for admins assigning students to course
+//API for admins assigning teachers to courses
 app.post('/assignteacher/:courseid/:teacherid', function (request, response) {
 
    connection.query(`CALL AssignCourses(${+request.params.courseid}, ${+request.params.teacherid});`, (error, result)=>{
