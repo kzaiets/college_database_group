@@ -19,8 +19,9 @@ const port = 3000;
 
 //Start server listening on the port
 app.listen(port, () => {
-    console.log(`listening on port ${port}`)
-  });
+  console.log(`listening on port ${port}`)
+});
+
 
 //json 
 app.use(express.json());
@@ -66,10 +67,47 @@ app.get('/courses', function (request, response) {
    });
 });
 
+//API for admins to make courses available/unavailable
+app.post('/courseavail/:courseid/:enabledisable', function (request, response) {
 
+  connection.query(`CALL ChangeAvailability(${+request.params.courseid}, ${+request.params.enabledisable});`, (error, result)=>{
 
+      if (error) {
+         console.log(error)
+      };
+      message = result[0]
 
+      response.send(message)
+    });    
+});
 
+//API for admins assigning teachers to courses
+app.post('/assignteacher/:courseid/:teacherid', function (request, response) {
 
+   connection.query(`CALL AssignCourses(${+request.params.courseid}, ${+request.params.teacherid});`, (error, result)=>{
+ 
+       if (error) {
+          console.log(error)
+       };
+       message = result[0]
+ 
+       response.send(message)
+     });    
+ });
 
+//Teachers can fail or pass a student.
+ app.post('/mark/:courseid/:studentid/:markgiven', function (request, response) {
 
+   connection.query(`CALL MarkStudents(${+request.params.courseid}, ${+request.params.studentid}, ${request.params.markgiven});`, (error, result)=>{
+       
+       if (error) {
+          console.log(error)
+       };
+
+       
+       message = JSON.parse(JSON.stringify(result[0]))[0].Response
+ 
+     
+       response.send(message)
+      });
+});
