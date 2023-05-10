@@ -85,3 +85,28 @@ END IF;
 END IF;
 SELECT Response;
 END //
+
+-- Ensure only the authorized access can perform an action.
+DROP PROCEDURE IF EXISTS Authorize;
+DELIMITER //
+CREATE PROCEDURE Authorize(IN UserID_provided INT, IN Role_provided VARCHAR(20))
+BEGIN
+DECLARE UserCheck INT;
+DECLARE UserRole INT;
+DECLARE RoleCheck INT;
+DECLARE Response VARCHAR(100);
+SET UserCheck = (SELECT UserID FROM users WHERE UserID = UserID_provided);
+SET UserRole = (SELECT RoleID FROM roles WHERE Role = Role_provided);
+SET RoleCheck = (SELECT RoleID FROM users WHERE UserID = UserID_provided);
+IF NOT EXISTS (SELECT 1 FROM users WHERE UserID = UserID_provided)
+THEN 
+SET Response = "This user doesn't exist";
+ELSE IF RoleCheck != UserRole
+THEN 
+SET Response = "This user is not authorized to perform the action";
+ELSE 
+SET Response = 'OK';
+END IF;
+END IF;
+SELECT Response;
+END //

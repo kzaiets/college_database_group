@@ -29,8 +29,16 @@ app.use(express.json());
 
 // API EXAMPLES
 
+//defining variables to be passed to authorize procedure to make sure only authorized users perform action 
+StudentAuthorized = 'Student'
+TeacherAuthorized = 'Teacher'
+AdminAuthorized = 'Admin'
+
 // API for student enrolling to course
 app.post('/enrol/:courseid/:studentid', function (request, response) {
+    //Check if a user is authorized to perform an action
+    // Call the Authorize procedure
+
 
     // Call the stored procedure and pass the necessary parameters received from the user
     // Plus sign converts the values to numbers
@@ -50,7 +58,9 @@ app.post('/enrol/:courseid/:studentid', function (request, response) {
 
 // API for students to view available courses
 app.get('/courses', function (request, response) {
-   
+     //Check if a user is authorized to perform an action
+    // Call the Authorize procedure
+    
     // Call the stored procedure
     connection.query(`CALL ViewCourses`, (error, result)=>{
         // Handle SQL errors
@@ -69,6 +79,8 @@ app.get('/courses', function (request, response) {
 
 //API for admins to make courses available/unavailable
 app.post('/courseavail/:courseid/:enabledisable', function (request, response) {
+  //Check if a user is authorized to perform an action
+  // Call the Authorize procedure
 
   connection.query(`CALL ChangeAvailability(${+request.params.courseid}, ${+request.params.enabledisable});`, (error, result)=>{
 
@@ -83,6 +95,9 @@ app.post('/courseavail/:courseid/:enabledisable', function (request, response) {
 
 //API for admins assigning teachers to courses
 app.post('/assignteacher/:courseid/:teacherid', function (request, response) {
+   //Check if a user is authorized to perform an action
+
+  // Call the Authorize procedure
 
    connection.query(`CALL AssignCourses(${+request.params.courseid}, ${+request.params.teacherid});`, (error, result)=>{
  
@@ -97,6 +112,9 @@ app.post('/assignteacher/:courseid/:teacherid', function (request, response) {
 
 //Teachers can fail or pass a student.
  app.post('/mark/:courseid/:studentid/:markgiven', function (request, response) {
+   //Check if a user is authorized to perform an action
+  
+  // Call the Authorize procedure
 
    connection.query(`CALL MarkStudents(${+request.params.courseid}, ${+request.params.studentid}, ${request.params.markgiven});`, (error, result)=>{
        
