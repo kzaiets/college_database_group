@@ -60,7 +60,7 @@ app.post('/enrol/:courseid/:studentid', function (request, response) {
 app.get('/courses', function (request, response) {
      //Check if a user is authorized to perform an action
     // Call the Authorize procedure
-    
+
     // Call the stored procedure
     connection.query(`CALL ViewCourses`, (error, result)=>{
         // Handle SQL errors
@@ -115,8 +115,7 @@ app.post('/assignteacher/:courseid/:teacherid', function (request, response) {
    //Check if a user is authorized to perform an action
   
   // Call the Authorize procedure
-
-   connection.query(`CALL MarkStudents(${+request.params.courseid}, ${+request.params.studentid}, ${request.params.markgiven});`, (error, result)=>{
+   connection.query(`CALL MarkStudents(${+request.params.courseid}, ${+request.params.studentid}, '${request.params.markgiven.toLowerCase()}');`, (error, result)=>{
        
        if (error) {
           console.log(error)

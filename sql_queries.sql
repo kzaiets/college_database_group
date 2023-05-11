@@ -68,7 +68,7 @@ IF EnrolmentCheck IS NULL
 	THEN 
     SET Response = "The student does not have an enrolment for this course.";
 -- Options for mark are Pass or Fail
-ELSE IF Mark_provided = "Pass"
+ELSE IF Mark_provided = "pass"
 	THEN
 	UPDATE enrolments
 	SET Mark = 1
