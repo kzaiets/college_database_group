@@ -2,11 +2,15 @@
 const e = require('express');
 const express = require('express');
 const mysql=require('mysql2');
+const dotenv = require('dotenv')
+dotenv.config()
+
+//server
 const connection = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "root",
-  database: "mydb",
+  host: process.env.DATABASE_HOST,
+  user: process.env.DATABASE_USER,
+  password: process.env.DATABASE_PASSWORD,
+  database: process.env.DATABASE
 });
 
 //instance expression
@@ -16,7 +20,7 @@ const app = express();
 console.log('test');
 
 //server
-const port = 3000; 
+const port = process.env.PORT;
 
 //Start server listening on the port
 app.listen(port, () => {
