@@ -1,12 +1,28 @@
 -- Create SQL queries
 -- 1. Admins should be able to enable or disable the availability of a course 
-DROP PROCEDURE IF EXISTS ChangeAvailability; 
+DROP PROCEDURE ChangeAvailability;
 DELIMITER //
 CREATE PROCEDURE ChangeAvailability(IN CourseID_provided INT, IN Availability_provided INT)
 BEGIN
+DECLARE CourseExists INT;
+DECLARE TeacherCheck INT;
+DECLARE Response VARCHAR(100);
+SET CourseExists = (SELECT CourseID FROM courses WHERE CourseID = CourseID_provided);
+SET TeacherCheck = (SELECT TeacherID FROM courses WHERE CourseID = CourseID_provided);
+IF CourseExists IS NULL
+THEN
+SET Response = "This course doesn't exist.";
+ELSE IF TeacherCheck = 0 AND Availability_provided = 1
+THEN
+SET Response = "Assign a teacher to the course first.";
+ELSE
 UPDATE courses
 SET isAvailable = Availability_provided
 WHERE CourseID = CourseID_provided;
+SET Response = "Success!";
+END IF;
+END IF;
+SELECT Response;
 END //
 
 -- 2. Admins should be able to assign one or more courses to a teacher
