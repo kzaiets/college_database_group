@@ -2,24 +2,34 @@
 -- 1. Admins should be able to enable or disable the availability of a course 
 DROP PROCEDURE ChangeAvailability;
 DELIMITER //
-CREATE PROCEDURE ChangeAvailability(IN CourseID_provided INT, IN Availability_provided INT)
+CREATE PROCEDURE ChangeAvailability(IN CourseID_provided INT, IN Availability_provided VARCHAR(10))
 BEGIN
 DECLARE CourseExists INT;
 DECLARE TeacherCheck INT;
+DECLARE EnableDisable INT;
 DECLARE Response VARCHAR(100);
 SET CourseExists = (SELECT CourseID FROM courses WHERE CourseID = CourseID_provided);
 SET TeacherCheck = (SELECT TeacherID FROM courses WHERE CourseID = CourseID_provided);
-IF CourseExists IS NULL
+SET EnableDisable = CASE Availability_provided
+	WHEN 'disable' THEN 0
+	WHEN 'enable' THEN 1
+	ELSE NULL
+    END;
+IF EnableDisable IS NULL
+THEN
+SET Response = 'Please, either enter "enable" or "disable"';
+ELSE IF CourseExists IS NULL
 THEN
 SET Response = "This course doesn't exist.";
-ELSE IF TeacherCheck = 0 AND Availability_provided = 1
+ELSE IF TeacherCheck = 0 AND EnableDisable = 1
 THEN
 SET Response = "Assign a teacher to the course first.";
 ELSE
 UPDATE courses
-SET isAvailable = Availability_provided
+SET isAvailable = EnableDisable
 WHERE CourseID = CourseID_provided;
 SET Response = "Success!";
+END IF;
 END IF;
 END IF;
 SELECT Response;

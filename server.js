@@ -116,7 +116,7 @@ app.post('/courseavail/:userid/:courseid/:enabledisable', function (request, res
      response.send(authorisation_response);
    }else{
   // Call the Authorize procedure
-      connection.query(`CALL ChangeAvailability(${+request.params.courseid}, ${+request.params.enabledisable});`, (error, result)=>{
+      connection.query(`CALL ChangeAvailability(${+request.params.courseid}, '${request.params.enabledisable.toLowerCase()}');`, (error, result)=>{
       if (error) {
           console.log(error);
          }
