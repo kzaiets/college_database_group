@@ -10,7 +10,7 @@ const connection = mysql.createConnection({
   host: process.env.DATABASE_HOST,
   user: process.env.DATABASE_USER,
   password: process.env.DATABASE_PASSWORD,
-  database: process.env.DATABASE_NAME
+  database: process.env.DATABASE
 });
 
 //instance expression
@@ -30,22 +30,6 @@ app.listen(port, () => {
 
 //json 
 app.use(express.json());
-
-
-//Using default error handler
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).send({
-    error: 'Internal server error'
-  });
-});
-
-//Users accessing routes that are not defined
-app.use((req, res, next) => {
-  res.status(404).json({
-    error: 'Not found'
-  });
-});
 
 
 // API EXAMPLES
