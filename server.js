@@ -31,6 +31,14 @@ app.listen(port, () => {
 //json 
 app.use(express.json());
 
+//Defineding a middleware function
+const myMiddleware = (req, res, next) => {
+  console.log('Middleware function executed');
+  next();
+};
+
+//Using the middleware function in apis
+app.use(myMiddleware);
 
 //Using default error handler
 app.use((err, req, res, next) => {
