@@ -4,23 +4,21 @@ DROP PROCEDURE ChangeAvailability;
 DELIMITER //
 CREATE PROCEDURE ChangeAvailability(IN CourseID_provided INT, IN Availability_provided VARCHAR(10))
 BEGIN
-DECLARE CourseExists INT;
 DECLARE TeacherCheck INT;
 DECLARE EnableDisable INT;
 DECLARE Response VARCHAR(100);
-SET CourseExists = (SELECT CourseID FROM courses WHERE CourseID = CourseID_provided);
 SET TeacherCheck = (SELECT TeacherID FROM courses WHERE CourseID = CourseID_provided);
+-- Set the value to be entered to the database to 0 if user inputs "disable" and 1 if "enable"
 SET EnableDisable = CASE Availability_provided
 	WHEN 'disable' THEN 0
 	WHEN 'enable' THEN 1
 	ELSE NULL
     END;
+-- Check if a user entered invalid value
 IF EnableDisable IS NULL
 THEN
 SET Response = 'Please, either enter "enable" or "disable"';
-ELSE IF CourseExists IS NULL
-THEN
-SET Response = "This course doesn't exist.";
+-- Check if teacher already assigned when admin tries to enable the course
 ELSE IF TeacherCheck = 0 AND EnableDisable = 1
 THEN
 SET Response = "Assign a teacher to the course first.";
@@ -28,21 +26,39 @@ ELSE
 UPDATE courses
 SET isAvailable = EnableDisable
 WHERE CourseID = CourseID_provided;
+-- Return success message
 SET Response = "Success!";
-END IF;
 END IF;
 END IF;
 SELECT Response;
 END //
 
+
 -- 2. Admins should be able to assign one or more courses to a teacher
-DROP PROCEDURE IF EXISTS AssignCourses; 
+DROP PROCEDURE IF EXISTS AssignCourses;
 DELIMITER //
 CREATE PROCEDURE AssignCourses(IN CourseID_provided INT, IN TeacherID_provided INT)
 BEGIN
+DECLARE Response VARCHAR(100);
+DECLARE TeacherCheck INT;
+SET TeacherCheck = (SELECT RoleID FROM users WHERE UserID = TeacherID_provided);
+-- Check if a teacher exists in the system
+IF NOT EXISTS (SELECT 1 FROM users WHERE UserID = TeacherID_provided) 
+THEN
+SET Response = "This teacher doesn't exist.";
+-- Make sure a TeacherID provided belongs to a teacher
+ELSE IF TeacherCheck != 2
+THEN
+SET Response = "This user is not a teacher";
+ELSE
 UPDATE courses
 SET TeacherID = TeacherID_provided
 WHERE CourseID = CourseID_provided;
+-- Return success message
+SET Response = "Success.";
+END IF;
+END IF;
+SELECT Response;
 END //
 
 -- 3. Students can browse and list all the available courses and see the course title and course teacher’s name.
@@ -50,9 +66,11 @@ DROP PROCEDURE IF EXISTS ViewCourses;
 DELIMITER //
 CREATE PROCEDURE ViewCourses()
 BEGIN
+-- Perform join
 SELECT courses.Title 'Course Title', IFNULL(users.Name, 'Teacher Not Yet Assigned') AS `Teacher Name` 
 FROM courses
 LEFT JOIN users ON courses.TeacherID = users.UserID
+-- Make sure students see only available courses
 WHERE isAvailable = 1;
 END // 
 
@@ -74,6 +92,7 @@ ELSE
 -- Check if enrollment successfully generated
 		IF ROW_COUNT() > 0
         THEN
+-- Return success message
 		SET Response = "Enrolment successful.";
 END IF;        
 END IF;
@@ -81,29 +100,30 @@ SELECT Response;
 END //
 
 -- 5. Teachers can fail or pass a student.
-DROP PROCEDURE IF EXISTS MarkStudents; 
+DROP PROCEDURE MarkStudents;
 DELIMITER //
-CREATE PROCEDURE MarkStudents(IN CourseID_provided INT, IN StudentId_provided INT, IN Mark_provided VARCHAR(4))
+CREATE PROCEDURE MarkStudents(IN CourseID_provided INT, IN StudentId_provided INT, IN Mark_provided VARCHAR(10))
 BEGIN
 DECLARE EnrolmentCheck INT;
+DECLARE Mark_ INT;
 DECLARE Response VARCHAR(100);
--- check if enrollment exists
 SET EnrolmentCheck = (SELECT EnrolmentID FROM enrolments WHERE CourseID = CourseID_provided AND UserID = StudentId_provided);
+-- Set the value to be entered to the database to 0 if user inputs "fail" and 1 if "pass"
+SET Mark_ = CASE Mark_provided
+	WHEN 'fail' THEN 0
+	WHEN 'pass' THEN 1
+	ELSE NULL
+    END;
+-- check if enrollment exists
 IF EnrolmentCheck IS NULL
--- If enrollment doesn't exist, return error message
-	THEN 
-    SET Response = "The student does not have an enrolment for this course.";
--- Options for mark are Pass or Fail
-ELSE IF Mark_provided = "pass"
+	THEN SET Response = "The student does not have an enrolment for this course.";
+-- Check if a user entered invalid value for a mark
+ELSE IF Mark_ IS NULL
 	THEN
-	UPDATE enrolments
-	SET Mark = 1
-	WHERE CourseID = CourseID_provided AND UserID = StudentId_provided;
--- Return success message
-    SET Response = "Grading successful.";
+    SET Response = 'Please, provide either "pass" or "fail" for grading';
 ELSE
 	UPDATE enrolments
-	SET Mark = 0
+	SET Mark = Mark_
 	WHERE CourseID = CourseID_provided AND UserID = StudentId_provided;
 -- Return success message
     SET Response = "Grading successful.";
@@ -111,6 +131,7 @@ END IF;
 END IF;
 SELECT Response;
 END //
+
 
 -- Ensure only the authorized access can perform an action.
 DROP PROCEDURE IF EXISTS Authorize;
@@ -124,15 +145,37 @@ DECLARE Response VARCHAR(100);
 SET UserCheck = (SELECT UserID FROM users WHERE UserID = UserID_provided);
 SET UserRole = (SELECT RoleID FROM roles WHERE Role = Role_provided);
 SET RoleCheck = (SELECT RoleID FROM users WHERE UserID = UserID_provided);
+-- Check if the user id exists in the system
 IF NOT EXISTS (SELECT 1 FROM users WHERE UserID = UserID_provided)
 THEN 
 SET Response = "This user doesn't exist";
+-- Check if the user role corresponds to user role needed to perform a certain action
 ELSE IF RoleCheck != UserRole
 THEN 
 SET Response = "This user is not authorized to perform the action";
 ELSE 
+-- Return success message
 SET Response = 'OK';
 END IF;
 END IF;
 SELECT Response;
 END //
+
+-- Check if a course exists for apis that rely on user inputing a course
+DROP PROCEDURE IF EXISTS CheckCourse;
+DELIMITER //
+CREATE PROCEDURE CheckCourse(IN CourseID_provided INT)
+BEGIN
+DECLARE CourseExists INT;
+DECLARE Response VARCHAR(100);
+SET CourseExists = (SELECT CourseID FROM courses WHERE CourseID = CourseID_provided);
+-- Make sure a course exists in the system
+IF CourseExists IS NULL
+THEN
+SET Response = "This course doesn't exist.";
+ELSE 
+-- Return success message
+SET Response = "OK";
+END IF;
+SELECT Response;
+END//

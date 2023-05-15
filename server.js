@@ -32,9 +32,8 @@ app.listen(port, () => {
 app.use(express.json());
 
 
-// API EXAMPLES
 
-//defining variables to be passed to authorize procedure to make sure only authorized users perform action 
+// Variables to be passed to authorize procedure to make sure only authorized users perform action 
 StudentAuthorized = 'Student'
 TeacherAuthorized = 'Teacher'
 AdminAuthorized = 'Admin'
@@ -44,17 +43,25 @@ AdminAuthorized = 'Admin'
 // API for student enrolling to course
 app.post('/enrol/:userid/:courseid/', function (request, response) {
     //Check if a user is authorized to perform an action
+    // Call the Authorize procedure
     connection.query(`CALL Authorize(${+request.params.userid}, '${StudentAuthorized}');`, (error, result) => {
       if (error) {
         console.log(error);
       }
-      // Call the Authorize procedure
       const authorisation_response = JSON.parse(JSON.stringify(result[0]))[0].Response;
       if (authorisation_response !== 'OK') {
         response.send(authorisation_response);
       }else{
+        connection.query(`CALL CheckCourse(${+request.params.courseid});`, (error, result) => {
+            if (error) {
+                console.log(error);
+              }
+            coursecheck_response = JSON.parse(JSON.stringify(result[0]))[0].Response;
+            if (coursecheck_response !== 'OK') {
+                response.send(coursecheck_response);
+            }
+            else{
     // Call the stored procedure and pass the necessary parameters received from the user
-    // Plus sign converts the values to numbers
     connection.query(`CALL Enrol(${+request.params.courseid}, ${+request.params.userid});`, (error, result)=>{
         // Handle SQL errors
         if (error) {
@@ -66,6 +73,8 @@ app.post('/enrol/:userid/:courseid/', function (request, response) {
         // Send the message to the user
         response.send(message)
       });
+    }
+});
    }
   });
 });
@@ -78,18 +87,19 @@ app.get('/courses/:userid', function (request, response) {
       if (error) {
         console.log(error);
       }
+      //Check if a user is authorized to perform an action
       // Call the Authorize procedure
       const authorisation_response = JSON.parse(JSON.stringify(result[0]))[0].Response;
       if (authorisation_response !== 'OK') {
         response.send(authorisation_response);
       }else{
-    // Call the stored procedure
+    // Call the stored procedure to get list of courses
     connection.query(`CALL ViewCourses`, (error, result)=>{
         // Handle SQL errors
         if (error) {
            console.log(error)
         };
-        // Database returns number to indicate what was completed
+
         // Get the list of available courses sent out of the database from the json body
        message = result[0]
 
@@ -110,19 +120,32 @@ app.post('/courseavail/:userid/:courseid/:enabledisable', function (request, res
    if (error) {
      console.log(error);
    }
+   //Check if a user is authorized to perform an action
    // Call the Authorize procedure
    const authorisation_response = JSON.parse(JSON.stringify(result[0]))[0].Response;
    if (authorisation_response !== 'OK') {
      response.send(authorisation_response);
    }else{
-  // Call the Authorize procedure
+       connection.query(`CALL CheckCourse(${+request.params.courseid});`, (error, result) => {
+        if (error) {
+            console.log(error);
+          }
+        coursecheck_response = JSON.parse(JSON.stringify(result[0]))[0].Response;
+        if (coursecheck_response !== 'OK') {
+            response.send(coursecheck_response);
+        }
+        else{
+    // Call the stored procedure to enable/disable course
       connection.query(`CALL ChangeAvailability(${+request.params.courseid}, '${request.params.enabledisable.toLowerCase()}');`, (error, result)=>{
       if (error) {
           console.log(error);
          }
    
-      response.send(authorisation_response);
+         message = JSON.parse(JSON.stringify(result[0]))[0].Response;
+         response.send(message);
       });
+    }
+});
      }
    });
 });
@@ -134,22 +157,36 @@ app.post('/courseavail/:userid/:courseid/:enabledisable', function (request, res
 //API for admins assigning teachers to courses
 app.post('/assignteacher/:userid/:courseid/:teacherid', function (request, response) {
    //Check if a user is authorized to perform an action
+   // Call the Authorize procedur
    connection.query(`CALL Authorize(${+request.params.userid}, '${AdminAuthorized}');`, (error, result) => {
       if (error) {
         console.log(error);
       }
-      // Call the Authorize procedur
       const authorisation_response = JSON.parse(JSON.stringify(result[0]))[0].Response;
       if (authorisation_response !== 'OK') {
         response.send(authorisation_response);
       }else{
-  // Call the Authorize procedure
+        // Check if the course exists
+        connection.query(`CALL CheckCourse(${+request.params.courseid});`, (error, result) => {
+            if (error) {
+                console.log(error);
+              }
+            coursecheck_response = JSON.parse(JSON.stringify(result[0]))[0].Response;
+            if (coursecheck_response !== 'OK') {
+                response.send(coursecheck_response);
+            }
+            else{
+
+  // Call the procedure to assign course to teacher
    connection.query(`CALL AssignCourses(${+request.params.courseid}, ${+request.params.teacherid});`, (error, result)=>{
       if (error) {
          console.log(error);
        }
-       response.send(authorisation_response);
+       message = JSON.parse(JSON.stringify(result[0]))[0].Response;
+       response.send(message);
      });
+    }
+    });
     }
    });
  });
@@ -157,24 +194,38 @@ app.post('/assignteacher/:userid/:courseid/:teacherid', function (request, respo
 
 
 
-//Teachers can fail or pass a student.
-app.post('/authorisation/:userid/:courseid/:studentid/:markgiven', function (request, response) {
+//API for teachers to fail or pass a student.
+app.post('/mark/:userid/:courseid/:studentid/:markgiven', function (request, response) {
    //Check if a user is authorized to perform an action
+   // Call the Authorize procedure
    connection.query(`CALL Authorize(${+request.params.userid}, '${TeacherAuthorized}');`, (error, result) => {
     if (error) {
       console.log(error);
     }
-    // Call the Authorize procedur
     authorisation_response = JSON.parse(JSON.stringify(result[0]))[0].Response;
     if (authorisation_response !== 'OK') {
       response.send(authorisation_response);
     }else{
-    connection.query(`CALL MarkStudents(${+request.params.courseid}, ${+request.params.studentid}, '${request.params.markgiven.toLowerCase()}');`, (error, result) => {
-      if (error) {
-        console.log(error);
-      }
-      message = JSON.parse(JSON.stringify(result[0]))[0].Response;
-      response.send(message);
+        // Check if the course exists
+        connection.query(`CALL CheckCourse(${+request.params.courseid});`, (error, result) => {
+            if (error) {
+                console.log(error);
+              }
+            coursecheck_response = JSON.parse(JSON.stringify(result[0]))[0].Response;
+            if (coursecheck_response !== 'OK') {
+                response.send(coursecheck_response);
+            }
+            else{
+                // Call the procedure to grade students
+                connection.query(`CALL MarkStudents(${+request.params.courseid}, ${+request.params.studentid}, '${request.params.markgiven.toLowerCase()}');`, (error, result) => {
+                    if (error) {
+                      console.log(error);
+                    }
+                    message = JSON.parse(JSON.stringify(result[0]))[0].Response;
+                    response.send(message);
+                  });
+            }
+
     });
    }
   });
