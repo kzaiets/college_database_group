@@ -1,0 +1,42 @@
+//Error logging
+const errorlog = (err, req, res, next) => {
+  console.log( `error ${err.message}`) 
+  next(err) 
+};
+//Users accessing routes that are not defined
+const undefinedPathHandler= (req, res, next) => {
+  const err = new Error('Not Found');
+  res.status(404)
+  res.send('invalid path')
+  next(err)
+};
+
+  //Using default error handler
+const defaultErrorHandler = (err, req, res, next) => {
+  console.error(err.stack);
+
+  const status = err.status || 500;
+  const message = err.message || 'Internal server error';
+
+  res.status(status).json({
+    error: message
+  });
+};
+
+// Socket hang up error handling
+const socketHangUpHandler = (err, req, res, next) => {
+  if (err.code === 'ECONNRESET') {
+    console.error('Socket hang up');
+    res.status(400).json({
+      error: 'Socket hang up'
+    });
+  } else {
+    next(err);
+  }
+};
+
+//Attach error handling middleware
+app.use(errorlog)
+app.use(undefinedPathHandler)
+app.use(defaultErrorHandler)
+app.use(socketHangUpHandler)
