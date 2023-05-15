@@ -10,7 +10,7 @@ const connection = mysql.createConnection({
   host: process.env.DATABASE_HOST,
   user: process.env.DATABASE_USER,
   password: process.env.DATABASE_PASSWORD,
-  database: process.env.DATABASE
+  database: process.env.DATABASE_NAME
 });
 
 //instance expression
@@ -116,7 +116,7 @@ app.post('/courseavail/:userid/:courseid/:enabledisable', function (request, res
      response.send(authorisation_response);
    }else{
   // Call the Authorize procedure
-      connection.query(`CALL ChangeAvailability(${+request.params.courseid}, '${request.params.enabledisable.toLowerCase()}');`, (error, result)=>{
+      connection.query(`CALL ChangeAvailability(${+request.params.courseid}, ${+request.params.enabledisable});`, (error, result)=>{
       if (error) {
           console.log(error);
          }
@@ -158,7 +158,7 @@ app.post('/assignteacher/:userid/:courseid/:teacherid', function (request, respo
 
 
 //Teachers can fail or pass a student.
-app.post('/authorisation/:userid/:courseid/:studentid/:markgiven', function (request, response) {
+app.post('/grading/:userid/:courseid/:studentid/:markgiven', function (request, response) {
    //Check if a user is authorized to perform an action
    connection.query(`CALL Authorize(${+request.params.userid}, '${TeacherAuthorized}');`, (error, result) => {
     if (error) {
