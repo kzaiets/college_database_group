@@ -38,15 +38,68 @@ StudentAuthorized = 'Student'
 TeacherAuthorized = 'Teacher'
 AdminAuthorized = 'Admin'
 
+//--------Error handling middleware---------------------------------------------------------------
+//Error logging
+const errorlog = (err, req, res, next) => {
+  console.log( `error ${err.message}`) 
+  next(err) 
+};
+//Users accessing routes that are not defined
+const undefinedPathHandler= (req, res, next) => {
+  const err = new Error('Not Found');
+  res.status(404)
+  res.send('Error: Invalid path')
+  next(err)
+};
 
+  //Using default error handler
+const defaultErrorHandler = (err, req, res, next) => {
+  console.error(err.stack);
+
+  const status = err.status || 500;
+  const message = err.message || 'Internal server error';
+  res.send('Error: API not working')
+
+  res.status(status).json({
+    error: message
+  });
+};
+
+// Socket hang up error handling
+const socketHangUpHandler = (err, req, res, next) => {
+  if (err.code === 'ECONNRESET') {
+    console.error('Socket hang up');
+    res.status(400).json({
+      error: 'Socket hang up'
+    });
+  } else {
+    next(err);
+  }
+};
+//end of error handling middleware---------------------------------------------------------------
+
+//--------APIs-------------------------------------------------------------------------------------
 
 // API for student enrolling to course
-app.post('/enrol/:userid/:courseid/', function (request, response) {
+app.post('/enrol/:userid/:courseid', function (request, response,next) {
+  // try catch block to handle any errors that may occur
+  try {
+    //validation of input data type and to handle any empty fields
+    if (isNaN(request.params.userid) || isNaN(request.params.courseid)) {
+      response.send('Invalid input. User ID and course ID should be numbers.');
+  
+    return;}
+    if (!request.params.userid || !request.params.courseid|| request.params.userid.trim() === '' || request.params.courseid.trim() === '' ) {
+      response.send('One of the values are blank, please check.');
+      return;
+    }
+
     //Check if a user is authorized to perform an action
     // Call the Authorize procedure
     connection.query(`CALL Authorize(${+request.params.userid}, '${StudentAuthorized}');`, (error, result) => {
       if (error) {
         console.log(error);
+        next(error);
       }
       const authorisation_response = JSON.parse(JSON.stringify(result[0]))[0].Response;
       if (authorisation_response !== 'OK') {
@@ -55,6 +108,7 @@ app.post('/enrol/:userid/:courseid/', function (request, response) {
         connection.query(`CALL CheckCourse(${+request.params.courseid});`, (error, result) => {
             if (error) {
                 console.log(error);
+                next(error);
               }
             coursecheck_response = JSON.parse(JSON.stringify(result[0]))[0].Response;
             if (coursecheck_response !== 'OK') {
@@ -66,6 +120,7 @@ app.post('/enrol/:userid/:courseid/', function (request, response) {
         // Handle SQL errors
         if (error) {
            console.log(error)
+           next(error);
         };
         // Get confirmation that enrollment was successful/unsuccessful from the database
         message = JSON.parse(JSON.stringify(result[0]))[0].Response
@@ -77,15 +132,32 @@ app.post('/enrol/:userid/:courseid/', function (request, response) {
 });
    }
   });
+} catch (error) {
+  console.log(error);
+  response.send('API error, contact the system administrator.');
+  next(error);
+}
 });
 
 
 
 // API for students to view available courses
-app.get('/courses/:userid', function (request, response) {
+app.get('/courses/:userid', function (request, response,next) {
+    try {
+      //validation of input data type and to handle any empty fields
+      if (isNaN(request.params.userid)) {
+        response.send('Invalid input. User ID, should be number.');
+    
+      return;}
+      if (!request.params.userid || request.params.userid.trim() === '' ) {
+        response.send('One of the values are blank, please check.');
+        return;
+      }
+
    connection.query(`CALL Authorize(${+request.params.userid}, '${StudentAuthorized}');`, (error, result) => {
       if (error) {
         console.log(error);
+        next(error);
       }
       //Check if a user is authorized to perform an action
       // Call the Authorize procedure
@@ -98,6 +170,7 @@ app.get('/courses/:userid', function (request, response) {
         // Handle SQL errors
         if (error) {
            console.log(error)
+           next(error);
         };
 
         // Get the list of available courses sent out of the database from the json body
@@ -108,17 +181,32 @@ app.get('/courses/:userid', function (request, response) {
       });
    }
  });
+} catch (error) {
+  console.log(error);
+  response.send('API error, contact the system administrator.');
+  next(error);
+}
 });
 
 
-
-
 //API for admins to make courses available/unavailable
-app.post('/courseavail/:userid/:courseid/:enabledisable', function (request, response) {
+app.post('/courseavail/:userid/:courseid/:course_available', function (request, response,next) {
+  try {
+    //validation of input data type and to handle any empty fields
+    if (isNaN(request.params.userid) || isNaN(request.params.courseid) || Number(request.params.course_available)) {
+      response.send('Invalid input. User ID, course ID, should be numbers and available should be "enable" or "disable".');
+  
+    return;}
+    if (!request.params.userid || !request.params.courseid || !request.params.course_available || request.params.userid.trim() === '' || request.params.courseid.trim() === '' || request.params.course_available.trim() === '' ) {
+      response.send('One of the values are blank, please check.');
+      return;
+    }
+
   //Check if a user is authorized to perform an action
   connection.query(`CALL Authorize(${+request.params.userid}, '${AdminAuthorized}');`, (error, result) => {
    if (error) {
      console.log(error);
+     next(error);
    }
    //Check if a user is authorized to perform an action
    // Call the Authorize procedure
@@ -129,6 +217,7 @@ app.post('/courseavail/:userid/:courseid/:enabledisable', function (request, res
        connection.query(`CALL CheckCourse(${+request.params.courseid});`, (error, result) => {
         if (error) {
             console.log(error);
+            next(error);
           }
         coursecheck_response = JSON.parse(JSON.stringify(result[0]))[0].Response;
         if (coursecheck_response !== 'OK') {
@@ -136,9 +225,10 @@ app.post('/courseavail/:userid/:courseid/:enabledisable', function (request, res
         }
         else{
     // Call the stored procedure to enable/disable course
-      connection.query(`CALL ChangeAvailability(${+request.params.courseid}, '${request.params.enabledisable.toLowerCase()}');`, (error, result)=>{
+      connection.query(`CALL ChangeAvailability(${+request.params.courseid}, '${request.params.course_available.toLowerCase()}');`, (error, result)=>{
       if (error) {
           console.log(error);
+          next(error);
          }
    
          message = JSON.parse(JSON.stringify(result[0]))[0].Response;
@@ -148,6 +238,11 @@ app.post('/courseavail/:userid/:courseid/:enabledisable', function (request, res
 });
      }
    });
+  } catch (error) {
+    console.log(error);
+    response.send('API error, contact the system administrator.');
+    next(error);
+  }
 });
 
 
@@ -155,14 +250,27 @@ app.post('/courseavail/:userid/:courseid/:enabledisable', function (request, res
 
 
 //API for admins assigning teachers to courses
-app.post('/assignteacher/:userid/:courseid/:teacherid', function (request, response) {
+app.post('/assignteacher/:userid/:courseid/:teacherid', function (request, response,next) {
+   // try catch block to handle any errors that may occur
+   try {
+    //validation of input data type and to handle any empty fields
+    if (isNaN(request.params.userid) || isNaN(request.params.courseid) || isNaN(request.params.teacherid)) {
+      response.send('Invalid input. User ID, course ID, and teacher ID should be numbers.');
+  
+    return;}
+    if (!request.params.userid || !request.params.courseid || !request.params.teacherid || request.params.userid.trim() === '' || request.params.courseid.trim() === '' || request.params.teacherid.trim() === '' ) {
+      response.send('One of the values are blank, please check.');
+      return;
+    }
+  
    //Check if a user is authorized to perform an action
    // Call the Authorize procedur
    connection.query(`CALL Authorize(${+request.params.userid}, '${AdminAuthorized}');`, (error, result) => {
       if (error) {
         console.log(error);
-      }
-      const authorisation_response = JSON.parse(JSON.stringify(result[0]))[0].Response;
+        next(error);
+      }else{
+        authorisation_response = JSON.parse(JSON.stringify(result[0]))[0].Response;
       if (authorisation_response !== 'OK') {
         response.send(authorisation_response);
       }else{
@@ -170,7 +278,8 @@ app.post('/assignteacher/:userid/:courseid/:teacherid', function (request, respo
         connection.query(`CALL CheckCourse(${+request.params.courseid});`, (error, result) => {
             if (error) {
                 console.log(error);
-              }
+                next(error);
+              }else{
             coursecheck_response = JSON.parse(JSON.stringify(result[0]))[0].Response;
             if (coursecheck_response !== 'OK') {
                 response.send(coursecheck_response);
@@ -181,27 +290,47 @@ app.post('/assignteacher/:userid/:courseid/:teacherid', function (request, respo
    connection.query(`CALL AssignCourses(${+request.params.courseid}, ${+request.params.teacherid});`, (error, result)=>{
       if (error) {
          console.log(error);
+         next(error);
        }
        message = JSON.parse(JSON.stringify(result[0]))[0].Response;
        response.send(message);
      });
     }
+  }
     });
     }
+  }
    });
+  } catch (error) {
+    console.log(error);
+    response.send('API error, contact the system administrator.');
+    next(error);
+  }
  });
 
 
 
-
 //API for teachers to fail or pass a student.
-app.post('/mark/:userid/:courseid/:studentid/:markgiven', function (request, response) {
+app.post('/mark/:userid/:courseid/:studentid/:markgiven', function (request, response,next) {
+  // try catch block to handle any errors that may occur
+  try {
+    //validation of input data type and to handle any empty fields
+    if (isNaN(request.params.userid) || isNaN(request.params.courseid) || isNaN(request.params.studentid) || Number(request.params.markgiven)) {
+      response.send('Invalid input. User ID, course ID, and student ID should be numbers and mark should be "pass" or "fail".');
+  
+    return;}
+    if (!request.params.userid || !request.params.courseid || !request.params.studentid || !request.params.markgiven || request.params.userid.trim() === '' || request.params.courseid.trim() === '' || request.params.studentid.trim() === '' || request.params.markgiven.trim() === '') {
+      response.send('One of the values are blank, please check.');
+      return;
+    }
+  
    //Check if a user is authorized to perform an action
    // Call the Authorize procedure
    connection.query(`CALL Authorize(${+request.params.userid}, '${TeacherAuthorized}');`, (error, result) => {
     if (error) {
       console.log(error);
-    }
+      next(error);
+    }else{
     authorisation_response = JSON.parse(JSON.stringify(result[0]))[0].Response;
     if (authorisation_response !== 'OK') {
       response.send(authorisation_response);
@@ -210,8 +339,10 @@ app.post('/mark/:userid/:courseid/:studentid/:markgiven', function (request, res
         connection.query(`CALL CheckCourse(${+request.params.courseid});`, (error, result) => {
             if (error) {
                 console.log(error);
-              }
+                next(error);
+              }else{
             coursecheck_response = JSON.parse(JSON.stringify(result[0]))[0].Response;
+    
             if (coursecheck_response !== 'OK') {
                 response.send(coursecheck_response);
             }
@@ -220,16 +351,33 @@ app.post('/mark/:userid/:courseid/:studentid/:markgiven', function (request, res
                 connection.query(`CALL MarkStudents(${+request.params.courseid}, ${+request.params.studentid}, '${request.params.markgiven.toLowerCase()}');`, (error, result) => {
                     if (error) {
                       console.log(error);
-                    }
+                      next(error);
+                    }else{
                     message = JSON.parse(JSON.stringify(result[0]))[0].Response;
                     response.send(message);
+                    }
                   });
             }
+          }
 
-    });
-   }
-  });
+        });
+      }
+    }
+   });
+  } catch (error) {
+    console.log(error);
+    response.send('API error, contact the system administrator.');
+    next(error);
+  }
 });
+//end of APIs-------------------------------------------------------------------------------------
+
+ //Error handling middleware
+app.use(errorlog);
+app.use(undefinedPathHandler);
+app.use(socketHangUpHandler);
+app.use(defaultErrorHandler);
+
 
 
  
