@@ -1,0 +1,818 @@
+{
+	"info": {
+		"_postman_id": "b89fc698-cc88-47b8-94d5-f4aefcaa7972",
+		"name": "mydb end of mod",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "13217325"
+	},
+	"item": [
+		{
+			"name": "enrol series 1",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"const response = pm.response.text()\r",
+							"\r",
+							"console.log(response)\r",
+							"\r",
+							"\r",
+							"pm.test(\"Status: Enrolment successful\", () => {\r",
+							"    pm.expect(response).to.eql(\"Enrolment successful.\")\r",
+							"\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{server port}}/enrol/:userid/:courseid",
+					"host": [
+						"{{server port}}"
+					],
+					"path": [
+						"enrol",
+						":userid",
+						":courseid"
+					],
+					"variable": [
+						{
+							"key": "userid",
+							"value": "18"
+						},
+						{
+							"key": "courseid",
+							"value": "3"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "enrol series 2",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"const response = pm.response.text()\r",
+							"\r",
+							"console.log(response)\r",
+							"\r",
+							"\r",
+							"pm.test(\"Status: The student is already enrolled.\", () => {\r",
+							"    pm.expect(response).to.eql(\"The student is already enrolled.\")\r",
+							"\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{server port}}/enrol/:userid/:courseid",
+					"host": [
+						"{{server port}}"
+					],
+					"path": [
+						"enrol",
+						":userid",
+						":courseid"
+					],
+					"variable": [
+						{
+							"key": "userid",
+							"value": "18"
+						},
+						{
+							"key": "courseid",
+							"value": "3"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "enrol security",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"const response = pm.response.text()\r",
+							"\r",
+							"console.log(response)\r",
+							"\r",
+							"\r",
+							"pm.test(\"Status: This user is not authorized to perform the action\", () => {\r",
+							"    pm.expect(response).to.eql(\"This user is not authorized to perform the action\")\r",
+							"\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{server port}}/enrol/:userid/:courseid",
+					"host": [
+						"{{server port}}"
+					],
+					"path": [
+						"enrol",
+						":userid",
+						":courseid"
+					],
+					"variable": [
+						{
+							"key": "userid",
+							"value": "2"
+						},
+						{
+							"key": "courseid",
+							"value": "5"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "available courses",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"const response = pm.response.json()\r",
+							"\r",
+							"console.log(response)\r",
+							"\r",
+							"const jsonString = '[{\"Course Title\": \"Machine learning\",\"Teacher Name\": \"Max Barrett\"},{\"Course Title\": \"Network security\",\"Teacher Name\": \"Ted Casey\"}]';\r",
+							"\r",
+							"const courses = JSON.parse(jsonString);\r",
+							"\r",
+							"pm.test(\"Status: courses displayed\", () => {\r",
+							"    pm.expect(response).to.eql(courses)\r",
+							"\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{server port}}/courses/:userid",
+					"host": [
+						"{{server port}}"
+					],
+					"path": [
+						"courses",
+						":userid"
+					],
+					"variable": [
+						{
+							"key": "userid",
+							"value": "14"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "available courses security",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"const response = pm.response.text()\r",
+							"\r",
+							"console.log(response)\r",
+							"\r",
+							"\r",
+							"pm.test(\"Status: This user is not authorized to perform the action\", () => {\r",
+							"    pm.expect(response).to.eql(\"This user is not authorized to perform the action\")\r",
+							"\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{server port}}/courses/:userid",
+					"host": [
+						"{{server port}}"
+					],
+					"path": [
+						"courses",
+						":userid"
+					],
+					"variable": [
+						{
+							"key": "userid",
+							"value": "2"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "course avail_status series 1",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"const response = pm.response.text()\r",
+							"\r",
+							"console.log(response)\r",
+							"\r",
+							"\r",
+							"pm.test(\"Status: course availability changed to enabled\", () => {\r",
+							"    pm.expect(response).to.eql(\"Success!\")\r",
+							"\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{server port}}/courseavail/:userid/:courseid/:course_available",
+					"host": [
+						"{{server port}}"
+					],
+					"path": [
+						"courseavail",
+						":userid",
+						":courseid",
+						":course_available"
+					],
+					"variable": [
+						{
+							"key": "userid",
+							"value": "2"
+						},
+						{
+							"key": "courseid",
+							"value": "5"
+						},
+						{
+							"key": "course_available",
+							"value": "enable"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "course avail_status series 2",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"const response = pm.response.text()\r",
+							"\r",
+							"console.log(response)\r",
+							"\r",
+							"\r",
+							"pm.test(\"Status: course availability changed to disabled\", () => {\r",
+							"    pm.expect(response).to.eql(\"Success!\")\r",
+							"\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{server port}}/courseavail/:userid/:courseid/:course_available",
+					"host": [
+						"{{server port}}"
+					],
+					"path": [
+						"courseavail",
+						":userid",
+						":courseid",
+						":course_available"
+					],
+					"variable": [
+						{
+							"key": "userid",
+							"value": "2"
+						},
+						{
+							"key": "courseid",
+							"value": "6"
+						},
+						{
+							"key": "course_available",
+							"value": "disable"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "course avail_status secuirty",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"const response = pm.response.text()\r",
+							"\r",
+							"console.log(response)\r",
+							"\r",
+							"\r",
+							"pm.test(\"Status: This user is not authorized to perform the action\", () => {\r",
+							"    pm.expect(response).to.eql(\"This user is not authorized to perform the action\")\r",
+							"\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{server port}}/courseavail/:userid/:courseid/:course_available",
+					"host": [
+						"{{server port}}"
+					],
+					"path": [
+						"courseavail",
+						":userid",
+						":courseid",
+						":course_available"
+					],
+					"variable": [
+						{
+							"key": "userid",
+							"value": "14"
+						},
+						{
+							"key": "courseid",
+							"value": "6"
+						},
+						{
+							"key": "course_available",
+							"value": "enable"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "assign teachers to courses series 1",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"const response = pm.response.text()\r",
+							"\r",
+							"console.log(response)\r",
+							"\r",
+							"\r",
+							"pm.test(\"Status:Teacher assigned to 1 course\", () => {\r",
+							"    pm.expect(response).to.eql(\"Success.\")\r",
+							"\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{server port}}/assignteacher/:userid/:courseid/:teacherid",
+					"host": [
+						"{{server port}}"
+					],
+					"path": [
+						"assignteacher",
+						":userid",
+						":courseid",
+						":teacherid"
+					],
+					"variable": [
+						{
+							"key": "userid",
+							"value": "2"
+						},
+						{
+							"key": "courseid",
+							"value": "1"
+						},
+						{
+							"key": "teacherid",
+							"value": "3"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "assign teachers to courses series 2",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"const response = pm.response.text()\r",
+							"\r",
+							"console.log(response)\r",
+							"\r",
+							"\r",
+							"pm.test(\"Status:Teacher assigned to more than 1 course\", () => {\r",
+							"    pm.expect(response).to.eql(\"Success.\")\r",
+							"\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{server port}}/assignteacher/:userid/:courseid/:teacherid",
+					"host": [
+						"{{server port}}"
+					],
+					"path": [
+						"assignteacher",
+						":userid",
+						":courseid",
+						":teacherid"
+					],
+					"variable": [
+						{
+							"key": "userid",
+							"value": "2"
+						},
+						{
+							"key": "courseid",
+							"value": "2"
+						},
+						{
+							"key": "teacherid",
+							"value": "3"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "assign teachers to courses security",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"const response = pm.response.text()\r",
+							"\r",
+							"console.log(response)\r",
+							"\r",
+							"\r",
+							"pm.test(\"Status: This user is not authorized to perform the action\", () => {\r",
+							"    pm.expect(response).to.eql(\"This user is not authorized to perform the action\")\r",
+							"\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{server port}}/assignteacher/:userid/:courseid/:teacherid",
+					"host": [
+						"{{server port}}"
+					],
+					"path": [
+						"assignteacher",
+						":userid",
+						":courseid",
+						":teacherid"
+					],
+					"variable": [
+						{
+							"key": "userid",
+							"value": "14"
+						},
+						{
+							"key": "courseid",
+							"value": "1"
+						},
+						{
+							"key": "teacherid",
+							"value": "3"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "teacher giving marks series 1",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"const response = pm.response.text()\r",
+							"\r",
+							"console.log(response)\r",
+							"\r",
+							"\r",
+							"pm.test(\"Status:Teacher passed student\", () => {\r",
+							"    pm.expect(response).to.eql(\"Grading successful.\")\r",
+							"\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{server port}}/mark/:userid/:courseid/:studentid/:markgiven",
+					"host": [
+						"{{server port}}"
+					],
+					"path": [
+						"mark",
+						":userid",
+						":courseid",
+						":studentid",
+						":markgiven"
+					],
+					"variable": [
+						{
+							"key": "userid",
+							"value": "3"
+						},
+						{
+							"key": "courseid",
+							"value": "3"
+						},
+						{
+							"key": "studentid",
+							"value": "18"
+						},
+						{
+							"key": "markgiven",
+							"value": "pass"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "teacher giving marks series 2",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"const response = pm.response.text()\r",
+							"\r",
+							"console.log(response)\r",
+							"\r",
+							"\r",
+							"pm.test(\"Status:Teacher failed student\", () => {\r",
+							"    pm.expect(response).to.eql(\"Grading successful.\")\r",
+							"\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{server port}}/mark/:userid/:courseid/:studentid/:markgiven",
+					"host": [
+						"{{server port}}"
+					],
+					"path": [
+						"mark",
+						":userid",
+						":courseid",
+						":studentid",
+						":markgiven"
+					],
+					"variable": [
+						{
+							"key": "userid",
+							"value": "6"
+						},
+						{
+							"key": "courseid",
+							"value": "4"
+						},
+						{
+							"key": "studentid",
+							"value": "18"
+						},
+						{
+							"key": "markgiven",
+							"value": "fail"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "teacher giving marks security",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"const response = pm.response.text()\r",
+							"\r",
+							"console.log(response)\r",
+							"\r",
+							"\r",
+							"pm.test(\"Status: This user is not authorized to perform the action\", () => {\r",
+							"    pm.expect(response).to.eql(\"This user is not authorized to perform the action\")\r",
+							"\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{server port}}/mark/:userid/:courseid/:studentid/:markgiven",
+					"host": [
+						"{{server port}}"
+					],
+					"path": [
+						"mark",
+						":userid",
+						":courseid",
+						":studentid",
+						":markgiven"
+					],
+					"variable": [
+						{
+							"key": "userid",
+							"value": "14"
+						},
+						{
+							"key": "courseid",
+							"value": "15"
+						},
+						{
+							"key": "studentid",
+							"value": "18"
+						},
+						{
+							"key": "markgiven",
+							"value": "pass"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "server port",
+			"value": "http://localhost:3000"
+		}
+	]
+}

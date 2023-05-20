@@ -1,0 +1,540 @@
+{
+	"id": "15f4320d-003e-4f76-a3a8-1afb2b1e0bfa",
+	"name": "mydb end of mod",
+	"timestamp": "2023-05-20T13:54:01.364Z",
+	"collection_id": "13217325-b89fc698-cc88-47b8-94d5-f4aefcaa7972",
+	"folder_id": 0,
+	"environment_id": "0",
+	"totalPass": 28,
+	"delay": 0,
+	"persist": true,
+	"status": "finished",
+	"startedAt": "2023-05-20T13:53:59.216Z",
+	"totalFail": 0,
+	"results": [
+		{
+			"id": "c7e43b6d-9150-44d5-a126-8a4e649318eb",
+			"name": "enrol series 1",
+			"url": "http://localhost:3000/enrol/18/3",
+			"time": 18,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status code is 200": true,
+				"Status: Enrolment successful": true
+			},
+			"testPassFailCounts": {
+				"Status code is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Status: Enrolment successful": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				18
+			],
+			"allTests": [
+				{
+					"Status code is 200": true,
+					"Status: Enrolment successful": true
+				}
+			]
+		},
+		{
+			"id": "f53ddf2f-1d41-42e9-bf5a-721f09c0e49b",
+			"name": "enrol series 2",
+			"url": "http://localhost:3000/enrol/18/3",
+			"time": 4,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status code is 200": true,
+				"Status: The student is already enrolled.": true
+			},
+			"testPassFailCounts": {
+				"Status code is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Status: The student is already enrolled.": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				4
+			],
+			"allTests": [
+				{
+					"Status code is 200": true,
+					"Status: The student is already enrolled.": true
+				}
+			]
+		},
+		{
+			"id": "e5c38078-5c40-43d1-816a-334c9488708d",
+			"name": "enrol security",
+			"url": "http://localhost:3000/enrol/2/5",
+			"time": 3,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status code is 200": true,
+				"Status: This user is not authorized to perform the action": true
+			},
+			"testPassFailCounts": {
+				"Status code is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Status: This user is not authorized to perform the action": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				3
+			],
+			"allTests": [
+				{
+					"Status code is 200": true,
+					"Status: This user is not authorized to perform the action": true
+				}
+			]
+		},
+		{
+			"id": "6880801b-7d44-4472-8b07-9a97654a60c7",
+			"name": "available courses",
+			"url": "http://localhost:3000/courses/14",
+			"time": 3,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status code is 200": true,
+				"Status: courses displayed": true
+			},
+			"testPassFailCounts": {
+				"Status code is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Status: courses displayed": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				3
+			],
+			"allTests": [
+				{
+					"Status code is 200": true,
+					"Status: courses displayed": true
+				}
+			]
+		},
+		{
+			"id": "82a09a12-a77c-456f-b872-a9b38866e226",
+			"name": "available courses security",
+			"url": "http://localhost:3000/courses/2",
+			"time": 2,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status code is 200": true,
+				"Status: This user is not authorized to perform the action": true
+			},
+			"testPassFailCounts": {
+				"Status code is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Status: This user is not authorized to perform the action": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				2
+			],
+			"allTests": [
+				{
+					"Status code is 200": true,
+					"Status: This user is not authorized to perform the action": true
+				}
+			]
+		},
+		{
+			"id": "b80c35ae-18f2-4662-9708-61851b829672",
+			"name": "course avail_status series 1",
+			"url": "http://localhost:3000/courseavail/2/5/enable",
+			"time": 5,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status code is 200": true,
+				"Status: course availability changed to enabled": true
+			},
+			"testPassFailCounts": {
+				"Status code is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Status: course availability changed to enabled": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				5
+			],
+			"allTests": [
+				{
+					"Status code is 200": true,
+					"Status: course availability changed to enabled": true
+				}
+			]
+		},
+		{
+			"id": "d0a66fd1-4865-48cd-985c-df25fc8cb038",
+			"name": "course avail_status series 2",
+			"url": "http://localhost:3000/courseavail/2/6/disable",
+			"time": 3,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status code is 200": true,
+				"Status: course availability changed to disabled": true
+			},
+			"testPassFailCounts": {
+				"Status code is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Status: course availability changed to disabled": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				3
+			],
+			"allTests": [
+				{
+					"Status code is 200": true,
+					"Status: course availability changed to disabled": true
+				}
+			]
+		},
+		{
+			"id": "b3503aa9-35cf-4da1-8aee-e80e99aa3af6",
+			"name": "course avail_status secuirty",
+			"url": "http://localhost:3000/courseavail/14/6/enable",
+			"time": 2,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status code is 200": true,
+				"Status: This user is not authorized to perform the action": true
+			},
+			"testPassFailCounts": {
+				"Status code is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Status: This user is not authorized to perform the action": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				2
+			],
+			"allTests": [
+				{
+					"Status code is 200": true,
+					"Status: This user is not authorized to perform the action": true
+				}
+			]
+		},
+		{
+			"id": "2d91d3d3-5c4e-459e-a681-9cba52c22fce",
+			"name": "assign teachers to courses series 1",
+			"url": "http://localhost:3000/assignteacher/2/1/3",
+			"time": 4,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status code is 200": true,
+				"Status:Teacher assigned to 1 course": true
+			},
+			"testPassFailCounts": {
+				"Status code is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Status:Teacher assigned to 1 course": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				4
+			],
+			"allTests": [
+				{
+					"Status code is 200": true,
+					"Status:Teacher assigned to 1 course": true
+				}
+			]
+		},
+		{
+			"id": "ab033252-24db-4722-b9f7-efa31753e602",
+			"name": "assign teachers to courses series 2",
+			"url": "http://localhost:3000/assignteacher/2/2/3",
+			"time": 4,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status code is 200": true,
+				"Status:Teacher assigned to more than 1 course": true
+			},
+			"testPassFailCounts": {
+				"Status code is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Status:Teacher assigned to more than 1 course": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				4
+			],
+			"allTests": [
+				{
+					"Status code is 200": true,
+					"Status:Teacher assigned to more than 1 course": true
+				}
+			]
+		},
+		{
+			"id": "3d9c2642-cb0b-44e2-9fff-b0d87d0bce0f",
+			"name": "assign teachers to courses security",
+			"url": "http://localhost:3000/assignteacher/14/1/3",
+			"time": 2,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status code is 200": true,
+				"Status: This user is not authorized to perform the action": true
+			},
+			"testPassFailCounts": {
+				"Status code is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Status: This user is not authorized to perform the action": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				2
+			],
+			"allTests": [
+				{
+					"Status code is 200": true,
+					"Status: This user is not authorized to perform the action": true
+				}
+			]
+		},
+		{
+			"id": "619a0c45-83fa-4ce9-ac06-29fc322d980e",
+			"name": "teacher giving marks series 1",
+			"url": "http://localhost:3000/mark/3/3/18/pass",
+			"time": 4,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status code is 200": true,
+				"Status:Teacher passed student": true
+			},
+			"testPassFailCounts": {
+				"Status code is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Status:Teacher passed student": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				4
+			],
+			"allTests": [
+				{
+					"Status code is 200": true,
+					"Status:Teacher passed student": true
+				}
+			]
+		},
+		{
+			"id": "a2f22864-3b17-4ce0-8e76-815bb2a85ff2",
+			"name": "teacher giving marks series 2",
+			"url": "http://localhost:3000/mark/6/4/18/fail",
+			"time": 4,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status code is 200": true,
+				"Status:Teacher failed student": true
+			},
+			"testPassFailCounts": {
+				"Status code is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Status:Teacher failed student": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				4
+			],
+			"allTests": [
+				{
+					"Status code is 200": true,
+					"Status:Teacher failed student": true
+				}
+			]
+		},
+		{
+			"id": "2d7d82ae-5118-474e-b56c-099d9ac21f1a",
+			"name": "teacher giving marks security",
+			"url": "http://localhost:3000/mark/14/15/18/pass",
+			"time": 2,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status code is 200": true,
+				"Status: This user is not authorized to perform the action": true
+			},
+			"testPassFailCounts": {
+				"Status code is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Status: This user is not authorized to perform the action": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				2
+			],
+			"allTests": [
+				{
+					"Status code is 200": true,
+					"Status: This user is not authorized to perform the action": true
+				}
+			]
+		}
+	],
+	"count": 1,
+	"totalTime": 60,
+	"collection": {
+		"requests": [
+			{
+				"id": "c7e43b6d-9150-44d5-a126-8a4e649318eb",
+				"method": "POST"
+			},
+			{
+				"id": "f53ddf2f-1d41-42e9-bf5a-721f09c0e49b",
+				"method": "POST"
+			},
+			{
+				"id": "e5c38078-5c40-43d1-816a-334c9488708d",
+				"method": "POST"
+			},
+			{
+				"id": "6880801b-7d44-4472-8b07-9a97654a60c7",
+				"method": "GET"
+			},
+			{
+				"id": "82a09a12-a77c-456f-b872-a9b38866e226",
+				"method": "GET"
+			},
+			{
+				"id": "b80c35ae-18f2-4662-9708-61851b829672",
+				"method": "POST"
+			},
+			{
+				"id": "d0a66fd1-4865-48cd-985c-df25fc8cb038",
+				"method": "POST"
+			},
+			{
+				"id": "b3503aa9-35cf-4da1-8aee-e80e99aa3af6",
+				"method": "POST"
+			},
+			{
+				"id": "2d91d3d3-5c4e-459e-a681-9cba52c22fce",
+				"method": "POST"
+			},
+			{
+				"id": "ab033252-24db-4722-b9f7-efa31753e602",
+				"method": "POST"
+			},
+			{
+				"id": "3d9c2642-cb0b-44e2-9fff-b0d87d0bce0f",
+				"method": "POST"
+			},
+			{
+				"id": "619a0c45-83fa-4ce9-ac06-29fc322d980e",
+				"method": "POST"
+			},
+			{
+				"id": "a2f22864-3b17-4ce0-8e76-815bb2a85ff2",
+				"method": "POST"
+			},
+			{
+				"id": "2d7d82ae-5118-474e-b56c-099d9ac21f1a",
+				"method": "POST"
+			}
+		]
+	}
+}
