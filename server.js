@@ -1,34 +1,32 @@
-// test
-const e = require('express');
 const express = require('express');
-const mysql=require('mysql2');
+const mysql = require('mysql2');
 const dotenv = require('dotenv')
 dotenv.config()
 
-//server
+// Connecting to database
 const connection = mysql.createConnection({
-  host: process.env.DATABASE_HOST,
-  user: process.env.DATABASE_USER,
-  password: process.env.DATABASE_PASSWORD,
-  database: process.env.DATABASE
+    host: process.env.DATABASE_HOST,
+    user: process.env.DATABASE_USER,
+    password: process.env.DATABASE_PASSWORD,
+    database: process.env.DATABASE
 });
 
-//instance expression
+// Instance expression
 const app = express();
 
 //log
 console.log('test');
 
-//server
+// Server
 const port = process.env.PORT;
 
 //Start server listening on the port
 app.listen(port, () => {
-  console.log(`listening on port ${port}`)
+    console.log(`listening on port ${port}`)
 });
 
 
-//json 
+// json 
 app.use(express.json());
 
 
@@ -137,7 +135,7 @@ app.post('/enrol/:userid/:courseid', function (request, response,next) {
   response.send('API error, contact the system administrator.');
   next(error);
 }
-});
+
 
 
 
@@ -243,9 +241,6 @@ app.post('/courseavail/:userid/:courseid/:course_available', function (request, 
     response.send('API error, contact the system administrator.');
     next(error);
   }
-});
-
-
 
 
 
@@ -307,7 +302,6 @@ app.post('/assignteacher/:userid/:courseid/:teacherid', function (request, respo
     next(error);
   }
  });
-
 
 
 //API for teachers to fail or pass a student.
